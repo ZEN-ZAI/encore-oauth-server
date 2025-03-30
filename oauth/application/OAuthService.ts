@@ -104,4 +104,28 @@ export class OAuthService {
     }
     return { userId: token.userId, scope: token.scope };
   }
+
+  validateAccessToken(accessToken: string): { userId: string; scope?: string } {
+    const token = this.tokenRepo.getByAccessToken(accessToken);
+    if (!token) {
+      throw new Error("Invalid or expired access token");
+    }
+    return { userId: token.userId, scope: token.scope };
+  }
+
+  getUserIdFromToken(accessToken: string): string {
+    const token = this.tokenRepo.getByAccessToken(accessToken);
+    if (!token) {
+      throw new Error("Invalid or expired access token");
+    }
+    return token.userId;
+  }
+
+  getScopeFromToken(accessToken: string): string | undefined {
+    const token = this.tokenRepo.getByAccessToken(accessToken);
+    if (!token) {
+      throw new Error("Invalid or expired access token");
+    }
+    return token.scope;
+  }
 }

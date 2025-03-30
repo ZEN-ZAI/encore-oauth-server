@@ -1,7 +1,7 @@
 // api/token.ts
 import { api, APIError } from "encore.dev/api";
 import { OAuthService } from "../application/OAuthService";
-import { clientRepository, authCodeRepository, tokenRepository } from "../infrastructure/Repositories";
+import { clientRepository, authCodeRepository, tokenRepository } from "../infrastructure/MemoryInstance";
 
 const oauthService = new OAuthService(clientRepository, authCodeRepository, tokenRepository);
 
