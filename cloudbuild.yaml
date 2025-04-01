@@ -12,7 +12,7 @@ steps:
           ./install.sh && \
           curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
           apt-get install -y nodejs && \
-          /builder/home/.encore/bin/encore build docker app
+          /builder/home/.encore/bin/encore build docker --base=oven/bun:slim $_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
   - name: gcr.io/cloud-builders/docker
     args:
       - push
