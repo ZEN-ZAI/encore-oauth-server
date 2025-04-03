@@ -3,4 +3,5 @@
 	// Use "encore app link" to link it.
 	"id":   "",
 	"lang": "typescript",
+	"allow_origins_without_credentials": ["*"],
 }
