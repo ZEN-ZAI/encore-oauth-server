@@ -2,6 +2,8 @@
 import { api, APIError } from "encore.dev/api";
 import { OAuthService } from "../application/OAuthService";
 import { clientRepository, authCodeRepository, tokenRepository } from "../infrastructure/MemoryInstance";
+import { parse } from "url";
+import { IncomingMessage, ServerResponse } from "http";
 
 const oauthService = new OAuthService(clientRepository, authCodeRepository, tokenRepository);
 
@@ -17,13 +19,21 @@ export interface AuthResponse {
   redirect_url: string;
 }
 
-export const authorize = api({ expose: true, method: "GET", path: "/oauth/authorize" }, async (req: AuthRequest): Promise<AuthResponse> => {
-  if (req.response_type !== "code") {
-    throw APIError.invalidArgument("Unsupported response type");
+export const authorize = api.raw(
+  { expose: true, method: "GET", path: "/oauth/authorize" },
+  async (req: IncomingMessage, res: ServerResponse<IncomingMessage>): Promise<void> => {
+    const parsedUrl = parse(req.url || "", true);
+    const params = parsedUrl.query as unknown as AuthRequest;
+
+    if (params.response_type !== "code") {
+      throw APIError.invalidArgument("Unsupported response type");
+    }
+    const authCode = oauthService.generateAuthCode(params.client_id, params.redirect_uri, params.scope);
+    const url = new URL(params.redirect_uri);
+    url.searchParams.set("code", authCode.code);
+    if (params.state) url.searchParams.set("state", params.state);
+
+    res.writeHead(301, { Location: url.toString() });
+    res.end();
   }
-  const authCode = oauthService.generateAuthCode(req.client_id, req.redirect_uri, req.scope);
-  const url = new URL(req.redirect_uri);
-  url.searchParams.set("code", authCode.code);
-  if (req.state) url.searchParams.set("state", req.state);
-  return { redirect_url: url.toString() };
-});
+);

@@ -11,6 +11,7 @@ export class InMemoryClientRepository implements IClientRepository {
   constructor() {
     // Preload a demo client
     this.clients.set("client-id-123", new Client("client-id-123", "secret-abc", "http://localhost:5173/callback"));
+    this.clients.set("client-id-456", new Client("client-id-456", "secret-abc", "http://localhost:3000/callback"));
   }
   getById(clientId: string): Client | undefined {
     return this.clients.get(clientId);
