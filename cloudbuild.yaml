@@ -6,32 +6,39 @@ steps:
     args:
       - -c
       - |
-          apt-get update && apt-get install -y curl && \
-          curl -L -o install.sh https://encore.dev/install.sh && \
-          chmod +x install.sh && \
-          ./install.sh && \
-          curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
-          apt-get install -y nodejs && \
-          /builder/home/.encore/bin/encore build docker --base=oven/bun:slim $_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
+        apt-get update && apt-get install -y curl unzip && \
+
+        curl -L -o bun-install.sh https://bun.sh/install && \
+        chmod +x bun-install.sh && \
+        ./bun-install.sh && \
+        ~/.bun/bin/bun install && \
+
+        curl -L -o encore-install.sh https://encore.dev/install.sh && \
+        chmod +x encore-install.sh && \
+        ./encore-install.sh && \
+        ln -s /builder/home/.encore/bin/encore /usr/local/bin/encore && \
+        encore telemetry disable && \
+
+        encore build docker --base=oven/bun:slim $_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
   - name: gcr.io/cloud-builders/docker
     args:
       - push
       - >-
         $_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
     id: Push
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
     args:
       - run
       - services
       - update
       - $_SERVICE_NAME
-      - '--platform=managed'
+      - "--platform=managed"
       - >-
         --image=$_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
       - >-
         --labels=managed-by=gcp-cloud-build-deploy-cloud-run,commit-sha=$COMMIT_SHA,gcb-build-id=$BUILD_ID,gcb-trigger-id=$_TRIGGER_ID
-      - '--region=$_DEPLOY_REGION'
-      - '--quiet'
+      - "--region=$_DEPLOY_REGION"
+      - "--quiet"
     id: Deploy
     entrypoint: gcloud
 images:
