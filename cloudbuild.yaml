@@ -1,5 +1,5 @@
 steps:
-  - name: ubuntu:latest
+  - name: debian:bullseye-slim
     id: Download, Install, and Build
     dir: /workspace
     entrypoint: bash
