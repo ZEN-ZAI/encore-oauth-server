@@ -1,7 +1,7 @@
 import { APIError, Header, Gateway } from "encore.dev/api";
 import { authHandler } from "encore.dev/auth";
 import { OAuthService } from "./application/OAuthService";
-import { clientRepository, authCodeRepository, tokenRepository } from "./infrastructure/MemoryInstance";
+import { clientRepository, authCodeRepository, tokenRepository } from "./infrastructure/MemoryRepository";
 
 const oauthService = new OAuthService(clientRepository, authCodeRepository, tokenRepository);
 

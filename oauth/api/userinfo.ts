@@ -1,7 +1,7 @@
 // api/userinfo.ts
 import { api } from "encore.dev/api";
 import { OAuthService } from "../application/OAuthService";
-import { clientRepository, authCodeRepository, tokenRepository } from "../infrastructure/MemoryInstance";
+import { clientRepository, authCodeRepository, tokenRepository } from "../infrastructure/MemoryRepository";
 import { getAuthData } from "~encore/auth";
 
 const oauthService = new OAuthService(clientRepository, authCodeRepository, tokenRepository);

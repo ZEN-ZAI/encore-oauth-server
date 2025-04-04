@@ -1,7 +1,7 @@
 // api/authorize.ts
 import { api, APIError } from "encore.dev/api";
 import { OAuthService } from "../application/OAuthService";
-import { clientRepository, authCodeRepository, tokenRepository } from "../infrastructure/MemoryInstance";
+import { clientRepository, authCodeRepository, tokenRepository } from "../infrastructure/MemoryRepository";
 import { parse } from "url";
 import { IncomingMessage, ServerResponse } from "http";
 

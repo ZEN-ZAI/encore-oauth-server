@@ -50,3 +50,8 @@ export class InMemoryTokenRepository implements ITokenRepository {
     this.refreshTokens.delete(refreshToken);
   }
 }
+
+
+export const clientRepository = new InMemoryClientRepository();
+export const authCodeRepository = new InMemoryAuthCodeRepository();
+export const tokenRepository = new InMemoryTokenRepository();
